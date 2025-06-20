@@ -1,0 +1,24 @@
+#!/usr/bin/env groovy
+
+/*
+ * This Jenkinsfile is intended to run on https://ci.jenkins.io and may fail anywhere else.
+ * It makes assumptions about plugins being installed, labels mapping to nodes that can build what is needed, etc.
+ */
+
+def failFast = false
+
+properties([
+  buildDiscarder(logRotator(numToKeepStr: '50', artifactNumToKeepStr: '3')),
+  disableConcurrentBuilds(abortPrevious: true)
+])
+
+def axes = [
+  platforms: ['linux', 'windows'],
+  jdks: [17, 21],
+]
+
+
+
+builds.failFast = failFast
+parallel builds
+infra.maybePublishIncrementals()
